@@ -1,0 +1,33 @@
+role_positioning_card:
+  task_role: producer
+  inferred_or_confirmed: inferred
+  artifact_type: website
+  target_users:
+    - name: 儿童与普通网页游戏玩家
+      job_to_be_done: 在几分钟内学会控制海狮并看懂它的生理需求与自主选择
+      friction: 复杂面板会遮挡游戏，随机行为会让学习机制显得虚假
+      value_trigger: 海狮因氧气、饥饿、恐惧和经验做出可观察的不同选择
+      proof_needed: 可玩的移动捕猎循环、行为原因面板、成功与失败后的偏好变化
+    - name: 动物行为模拟观察者
+      job_to_be_done: 布置可重复实验并观察位置记忆、形状学习和规则反转
+      friction: 固定脚本或智商数值无法解释学习过程
+      value_trigger: 同一套 Utility AI、记忆和学习系统在三个模式中持续工作
+      proof_needed: 尝试日志、学习价值、位置交换和规则变化后的真实重学
+  producer_preferences:
+    - 温暖自然且轻微卡通
+    - 海狮可爱但不过度拟人化
+    - 机制清楚优先于复杂画面
+  external_constraints:
+    - evidence
+    - accessibility
+    - privacy
+    - platform_format
+  feedback_loop:
+    leading_signal: 三分钟内出现一次可解释的尝试结果与后续偏好变化
+    outcome_signal: 玩家能完成双模式切换并说出海狮改变行为的至少一个原因
+    review_window: 首次完整试玩后与十分钟自由运行后
+  decision_priority:
+    - target_user_task
+    - evidence_boundary
+    - release_integrity
+    - producer_preference
