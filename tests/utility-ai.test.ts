@@ -119,4 +119,41 @@ describe('UtilityAISystem scoring', () => {
     expect(decision.behavior).toBe('slap');
     expect(decision.reason.some((factor) => factor.label === '探索提示触发')).toBe(true);
   });
+
+  it('always selects the guided action at maximum assistance when no emergency overrides it', () => {
+    const ai = new UtilityAISystem(() => 0.99);
+    const decision = ai.decide(context({
+      explorationRate: 1,
+      guidance: {
+        targetId: 'button-1', objectType: 'button', feature: 'circle', distance: 120,
+        preferredAction: 'slap', strength: 1,
+      },
+    }), 10_000);
+
+    expect(decision.behavior).toBe('slap');
+    expect(decision.reason.some((factor) => factor.label === '探索提示触发')).toBe(true);
+  });
+
+  it('keeps oxygen and fear emergencies above maximum guidance', () => {
+    const guidance = {
+      targetId: 'button-1', objectType: 'button' as const, feature: 'circle', distance: 120,
+      preferredAction: 'slap' as const, strength: 1,
+    };
+    const oxygenDecision = new UtilityAISystem(() => 0.99).decide(context({
+      physiology: createDefaultPhysiology({ oxygen: 7 }),
+      guidance,
+    }), 10_000);
+    const danger = {
+      id: 'sound-1', type: 'soundDevice' as const, feature: 'sudden', position: { x: 500, y: 400 },
+      distance: 80, novel: true, reward: 0, risk: 0.9, enabled: true,
+    };
+    const fearDecision = new UtilityAISystem(() => 0.99).decide(context({
+      physiology: createDefaultPhysiology({ fear: 92 }),
+      perception: { ...context().perception, dangerSource: danger },
+      guidance,
+    }), 10_000);
+
+    expect(oxygenDecision.behavior).toBe('surface');
+    expect(fearDecision.behavior).toBe('escape');
+  });
 });
