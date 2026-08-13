@@ -24,6 +24,21 @@ export class BirthdayScene extends BayScene {
     super('BirthdayScene', 'birthday');
   }
 
+  override init(data: Parameters<BayScene['init']>[0]): void {
+    super.init(data);
+    this.stage = 'intro';
+    this.stagePanel = undefined;
+    this.stageText = undefined;
+    this.triangleAssisted = false;
+    this.circleAssisted = false;
+    this.puzzleButtonPlaced = false;
+    this.puzzleApproached = false;
+    this.trainingErrorSeen = false;
+    this.reversalOldErrorSeen = false;
+    this.celebrated = false;
+    this.lastAssistNudgeAt = -Infinity;
+  }
+
   create(): void {
     super.create();
     this.paused = true;
