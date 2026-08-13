@@ -79,6 +79,11 @@ export class BayScene extends Phaser.Scene {
 
   init(data: BaySceneData): void {
     this.startData = data ?? {};
+    this.objectViews.clear();
+    this.fishViews.clear();
+    this.bubbles = [];
+    this.pauseOverlay = undefined;
+    this.toastText = undefined;
   }
 
   create(): void {
