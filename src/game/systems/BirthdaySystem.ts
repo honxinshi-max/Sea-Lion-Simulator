@@ -53,8 +53,10 @@ export class BirthdaySystem {
       const newSuccess = stageAttempts.some((attempt) => attempt.feature === 'triangle' && attempt.action === 'slap' && attempt.success);
       if (oldError && newSuccess && this.timeInCurrentStage() >= 45_000) this.enterStage('puzzle');
     } else if (this.currentStage === 'puzzle') {
-      const approached = stageAttempts.some((attempt) => attempt.feature === 'birthday-box' && attempt.action === 'approach' && attempt.success);
       const pushed = stageAttempts.some((attempt) => attempt.feature === 'birthday-box' && attempt.action === 'push' && attempt.success);
+      const approached = pushed || stageAttempts.some(
+        (attempt) => attempt.feature === 'birthday-box' && attempt.action === 'approach' && attempt.success,
+      );
       const solved = stageAttempts.some((attempt) => attempt.feature === 'triangle' && attempt.action === 'slap' && attempt.success);
       if (approached && pushed && solved && this.elapsed >= 150_000 && this.timeInCurrentStage() >= 45_000) {
         this.enterStage('celebration');

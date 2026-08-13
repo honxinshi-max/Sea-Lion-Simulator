@@ -6,7 +6,7 @@ import type { WorldObjectSnapshot } from '../src/game/types';
 
 describe('birthday autonomous integration', () => {
   it('finishes the learned birthday sequence across varied random seeds', () => {
-    for (const seed of [1, 7, 19, 41, 83, 137]) {
+    for (const seed of Array.from({ length: 256 }, (_, index) => index + 1)) {
       const result = runBirthday(seed);
       expect(result, `seed ${seed}`).toMatchObject({
         completed: true,
@@ -14,13 +14,23 @@ describe('birthday autonomous integration', () => {
         trainingSuccess: true,
         reversalError: true,
         reversalSuccess: true,
-        approachedBox: true,
+        reachedBox: true,
         pushedBox: true,
         solvedPuzzle: true,
       });
       expect(result.elapsed).toBeGreaterThanOrEqual(150_000);
       expect(result.elapsed).toBeLessThanOrEqual(210_000);
     }
+  });
+
+  it('finishes when a push succeeds before any separate approach event', () => {
+    expect(runBirthday(14)).toMatchObject({
+      completed: true,
+      approachedBox: false,
+      reachedBox: true,
+      pushedBox: true,
+      solvedPuzzle: true,
+    });
   });
 });
 
@@ -40,6 +50,7 @@ function runBirthday(seed: number) {
     reversalError: false,
     reversalSuccess: false,
     approachedBox: false,
+    reachedBox: false,
     pushedBox: false,
     solvedPuzzle: false,
   };
@@ -56,6 +67,8 @@ function runBirthday(seed: number) {
         observed.reversalSuccess ||= event.feature === 'triangle' && event.action === 'slap' && event.success;
       } else if (stage === 'puzzle') {
         observed.approachedBox ||= event.feature === 'birthday-box' && event.action === 'approach' && event.success;
+        observed.reachedBox ||= event.feature === 'birthday-box' &&
+          (event.action === 'approach' || event.action === 'push') && event.success;
         observed.pushedBox ||= event.feature === 'birthday-box' && event.action === 'push' && event.success;
         observed.solvedPuzzle ||= event.feature === 'triangle' && event.action === 'slap' && event.success;
         if (observed.pushedBox && !puzzleButtonPlaced) {
@@ -105,7 +118,7 @@ function runBirthday(seed: number) {
     } else if (stage === 'puzzle' && birthdaySnapshot.assistLevel > 0.15) {
       simulation.setGuidedExploration(
         puzzleButtonPlaced ? 'research-birthday-triangle' : 'research-birthday-box',
-        puzzleButtonPlaced ? 'slap' : observed.approachedBox ? 'push' : 'approach',
+        puzzleButtonPlaced ? 'slap' : observed.reachedBox ? 'push' : 'approach',
         birthdaySnapshot.assistLevel,
       );
     } else simulation.setGuidedExploration(undefined);

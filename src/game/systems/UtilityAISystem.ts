@@ -188,8 +188,9 @@ export class UtilityAISystem {
           ? 'explore'
           : undefined;
     const guidedCandidate = guidedBehavior ? scores.find((candidate) => candidate.behavior === guidedBehavior) : undefined;
+    const guidanceStrength = context.guidance?.strength ?? 0;
     const guidanceTriggered = !emergencyBehavior && Boolean(guidedCandidate) &&
-      this.random() < (context.guidance?.strength ?? 0) * 0.75;
+      (guidanceStrength >= 1 || this.random() < guidanceStrength * 0.75);
     const exploring = !emergencyBehavior && !guidanceTriggered && viable.length > 1 && this.random() < explorationRate;
     const selected = emergencyBehavior
       ? scores.find((candidate) => candidate.behavior === emergencyBehavior)!

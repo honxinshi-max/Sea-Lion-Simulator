@@ -43,6 +43,24 @@ describe('BirthdaySystem', () => {
     expect(birthday.snapshot().completed).toBe(true);
   });
 
+  it('treats a successful birthday-box push as proof of approach so the surprise cannot stall', () => {
+    const birthday = new BirthdaySystem();
+    birthday.start(0);
+    birthday.record({ feature: 'triangle', action: 'slap', success: false, at: 15_000 });
+    birthday.record({ feature: 'circle', action: 'slap', success: true, at: 40_000 });
+    birthday.step(40_000);
+    birthday.record({ feature: 'circle', action: 'slap', success: false, at: 60_000 });
+    birthday.record({ feature: 'triangle', action: 'slap', success: true, at: 90_000 });
+    birthday.step(90_000);
+    birthday.record({ feature: 'birthday-box', action: 'push', success: true, at: 130_000 });
+    birthday.record({ feature: 'triangle', action: 'slap', success: true, at: 145_000 });
+
+    birthday.step(150_000);
+
+    expect(birthday.snapshot().stage).toBe('celebration');
+    expect(birthday.snapshot().completed).toBe(true);
+  });
+
   it('raises exploration assistance gradually without instant completion', () => {
     const birthday = new BirthdaySystem();
     birthday.start(0);
