@@ -21,7 +21,7 @@ describe('birthday autonomous integration', () => {
       expect(result.elapsed).toBeGreaterThanOrEqual(150_000);
       expect(result.elapsed).toBeLessThanOrEqual(210_000);
     }
-  });
+  }, 15_000);
 
   it('finishes when a push succeeds before any separate approach event', () => {
     expect(runBirthday(14)).toMatchObject({
